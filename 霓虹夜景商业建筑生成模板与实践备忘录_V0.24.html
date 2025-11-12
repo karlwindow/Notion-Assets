@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>霓虹夜景商业建筑生成模板与实践备忘录（不含水晶球灯光变化）</title>
+<style>
+  :root {
+    --bg: #0e1116;
+    --panel: #151a21;
+    --ink: #e6edf3;
+    --muted: #9fb1c1;
+    --accent: #5dd6ff;
+    --good: #59d399;
+    --warn: #ffcc66;
+    --bad: #ff998a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 40px 20px; background: var(--bg); color: var(--ink);
+    font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+  header { margin-bottom: 28px; }
+  h1 { font-size: 26px; margin: 0 0 6px; }
+  .meta { color: var(--muted); font-size: 13px; }
+  section { background: var(--panel); border: 1px solid #1f2732; border-radius: 14px; padding: 18px 18px 6px; margin: 16px 0; }
+  h2 { font-size: 20px; margin: 0 0 10px; }
+  h3 { font-size: 17px; margin: 18px 0 6px; }
+  p, li { color: var(--ink); }
+  code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+  pre { white-space: pre-wrap; background: #0b0f14; border: 1px solid #222a35; border-radius: 12px; padding: 14px; overflow: auto; }
+  .tag { display: inline-block; border: 1px solid #2b3542; padding: 2px 8px; border-radius: 999px; font-size: 12px; color: var(--muted); margin-right: 6px; }
+  .ok { color: var(--good); }
+  .warn { color: var(--warn); }
+  .bad { color: var(--bad); }
+  ul.compact > li { margin: 4px 0; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 12px; }
+  hr { border: none; border-top: 1px solid #243042; margin: 12px 0; }
+  .small { color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>霓虹夜景商业建筑生成模板与实践备忘录（不含水晶球灯光变化）</h1>
+      <div class="meta">版本：V0.24 · 生成时间：2025-11-12 06:42</div>
+      <div class="meta">用途：汇总我们对“霓虹夜景商业建筑”生成中沉淀出的稳定模板、控制规则与故障排查（排除“水晶球灯光变化”话题）。</div>
+    </header>
+
+    <section id="toc">
+      <h2>目录</h2>
+      <ol>
+        <li><a href="#principles">稳定性关键原则</a></li>
+        <li><a href="#with-ref">有参考图时的极简模板</a></li>
+        <li><a href="#no-ref">无参考图时的控制性模板（通用横幅）</a></li>
+        <li><a href="#916">9:16 高层/塔楼竖图专用模板</a></li>
+        <li><a href="#window">亮窗一致性规则（防“黑窗/断电”）</a></li>
+        <li><a href="#reflection">倒影规则（防“镜像可读文字”）</a></li>
+        <li><a href="#deglitter">去玻璃“彩色颗粒/炫彩粒子”指令</a></li>
+        <li><a href="#edittext">后期改字/改店名的两种做法</a></li>
+        <li><a href="#troubleshoot">常见问题排查速查表</a></li>
+        <li><a href="#snippets">可复用片段库（直接粘贴）</a></li>
+      </ol>
+    </section>
+
+    <section id="principles">
+      <h2>1) 稳定性关键原则</h2>
+      <ul class="compact">
+        <li>把<strong>材质响应</strong>、<strong>色温分裂</strong>、<strong>体积光</strong>、<strong>倒影弱化</strong>写成硬规则；把<strong>“禁止可读反射文字”</strong>写成显式禁令。</li>
+        <li>避免“any text-like strokes inside window must dissolve into random RGB grain”等措辞，容易诱发玻璃五彩颗粒。替换为：<em>NO random rainbow/glitter particles on glazing</em>。</li>
+        <li>亮窗稳定三要素：<em>覆盖 85–95%</em>、<em>波动 ≤±10%</em>、<em>层级连续</em>（下强上弱、无黑带）。</li>
+        <li>倒影稳定三要素：<em>低保真</em>、<em>错位/涂抹</em>、<em>不可读</em>。</li>
+      </ul>
+    </section>
+
+    <section id="with-ref">
+      <h2>2) 有参考图时的极简模板</h2>
+      <pre>依据参考图改写：夜景商业广场 / 高层建筑，顶部安装超亮霓虹牌（内容：「【招牌文字】」），
+红 + 洋紫 + 冰蓝渐变，雾中真实体积光束与轻微色散；材质真实响应（金属高反条纹、石材哑光吸收、
+玻璃多层反射折射 + Fresnel），地面湿，水坑倒影为低保真涂抹且不可读；色温分裂：地面暖 3000K、
+天空冷 8500K；亮窗覆盖 85–95%，楼层水平连续，无大块黑窗；不出现任何拉丁字母。</pre>
+      <p class="small">用法：粘贴后仅替换【招牌文字】，其它由参考图约束。</p>
+    </section>
+
+    <section id="no-ref">
+      <h2>3) 无参考图时的控制性模板（通用横幅）</h2>
+      <pre>wet night-time commercial scene with humidity and haze, single building as main subject,
+camera slightly low, tilt down 4°, wet asphalt + puddles.
+
+NEON: content = 「【招牌文字】」 (Chinese only), colors = red + purple + ice-blue gradient,
+volumetric beams in fog with subtle chromatic bleeding; no decals; no Latin/English anywhere.
+
+Materials: metal sharp specular streaks; stone matte diffuse with slight wet absorption;
+glass layered reflections + refraction + Fresnel, <strong>NO rainbow/glitter particles on glazing</strong>.
+
+Window lighting:
+- illuminated coverage 85–95%; per-floor variation &lt; ±10%; smooth horizontal continuity
+- CCT 3000–3800K (commercial warm), not pure white, not over-yellow
+- soft vertical falloff (lower floors slightly brighter), no dead dark patches
+
+Environment: dual CCT split (ground≈3000K vs sky≈8500K), depth layering (foreground&gt;background),
+thin directional haze to reveal beams; highlight rolloff; deep blacks; subtle air particulate.
+
+Reflection (critical): puddle reflection = LOW FIDELITY (broken glitter dust / caustic smear /
+misaligned chromatic streaks), energy≈35%, <strong>reflection cannot contain readable glyphs</strong>.</pre>
+    </section>
+
+    <section id="916">
+      <h2>4) 9:16 高层/塔楼竖图专用模板（V0.24 Uniform Window Light Edition）</h2>
+      <pre>9:16 vertical, long-lens low angle, wet night-time commercial scene with humidity and haze,
+single tall building as primary subject (rectangular/chamfer/rounded/stepped allowed),
+mid–close to far distance, camera tilt down 4°, wet asphalt, puddles.
+
+Top neon: 「【招牌文字】」 only (Chinese), red + purple + ice-blue gradient,
+real volumetric beams in fog, subtle chromatic fringing, not decals; no Latin letters anywhere.
+
+Materials: metal sharp streaks; stone matte absorption; glass layered reflections + refraction
+with Fresnel; <strong>NO rainbow/glitter particles on glazing</strong>.
+
+Window rule (critical): coverage 85–95%, per-floor variation ≤ ±10%, continuous per-floor brightness,
+CCT 3000–3800K, soft lower-stronger vertical falloff, NO dark bands/voids behind glass.
+
+Environment: ground 3000K vs sky 8500K; depth layering; thin directional haze;
+highlight rolloff; deep blacks; subtle particulate noise.
+
+Reflection: LOW FIDELITY puddle smear, energy ≈35%, <strong>no legible text</strong>.</pre>
+      <p class="small">遇到暗窗：追加“increase window illuminated coverage to 92–97%, keep per-floor variation ≤ ±8%”。</p>
+    </section>
+
+    <section id="window">
+      <h2>5) 亮窗一致性规则（防“黑窗/断电”）</h2>
+      <ul>
+        <li><span class="tag">覆盖</span> 85–95%（必要时 92–97%）。</li>
+        <li><span class="tag">波动</span> 楼层内亮度 ≤ ±10%（必要时 ≤ ±8%）。</li>
+        <li><span class="tag">层级</span> 下强上弱的轻微渐变，禁止整段黑带。</li>
+        <li><span class="tag">色温</span> 3000–3800K；过黄→3200–3600K；过冷→3400–3800K。</li>
+        <li><span class="tag">措辞</span> 禁“dissolve into RGB grain”；用“NO rainbow/glitter particles on glazing”。</li>
+      </ul>
+    </section>
+
+    <section id="reflection">
+      <h2>6) 倒影规则（防“镜像可读文字”）</h2>
+      <ul>
+        <li>倒影 = 低保真抽象涂抹：broken glitter dust / caustic smear / misaligned chromatic streaks。</li>
+        <li>能量 ≈35%；显式禁止 readable glyphs（中文/英文都禁）。</li>
+        <li>顽固时：追加“destroy glyph legibility in puddle reflection”。</li>
+      </ul>
+    </section>
+
+    <section id="deglitter">
+      <h2>7) 去玻璃“彩色颗粒/炫彩粒子”指令</h2>
+      <pre>请将图中玻璃幕墙上的颗粒状彩色光斑去除，使其呈现真实玻璃在夜景与灯光下的
+物理光学效果（多层反射 + 折射 + Fresnel），不要改变其它内容与曝光。</pre>
+    </section>
+
+    <section id="edittext">
+      <h2>8) 后期改字/改店名</h2>
+      <div class="grid">
+        <div>
+          <h3>方法 A · 文生图直接改字</h3>
+          <ul class="compact">
+            <li>替换【招牌文字】即可；若出现拉丁字母，追加“no English/Latin letters anywhere; signage strictly Chinese”。</li>
+          </ul>
+        </div>
+        <div>
+          <h3>方法 B · 图生图/重绘</h3>
+          <ul class="compact">
+            <li>小蒙版覆盖招牌区域，提示：
+              <pre>将招牌文字替换为「罗马假日酒店」，字重一致、同等发光强度与色散，
+保留金属支架与体积光，不改变其它区域。</pre>
+            </li>
+            <li>若 puddle 出现可读字，再跑一遍“倒影不可读”补丁。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="troubleshoot">
+      <h2>9) 常见问题排查速查表</h2>
+      <ul>
+        <li><span class="bad">玻璃彩色颗粒</span> → 删“RGB grain”类措辞；加“NO rainbow/glitter particles on glazing”；或用去颗粒重绘。</li>
+        <li><span class="bad">倒影可读</span> → 强化低保真/错位/涂抹，并显式禁 readable glyphs。</li>
+        <li><span class="bad">大面积黑窗</span> → 覆盖提到 92–97%，波动降到 ±8%。</li>
+        <li><span class="warn">室内过黄/过冷</span> → 将 CCT 调整至 3200–3600K 范围。</li>
+        <li><span class="warn">出现拉丁字母</span> → 加“no English/Latin letters anywhere; signage strictly legit Chinese”。</li>
+      </ul>
+    </section>
+
+    <section id="snippets">
+      <h2>10) 可复用片段库</h2>
+      <h3>招牌占位</h3>
+      <pre>signage content = 「【招牌文字】」 only (Chinese)</pre>
+      <h3>亮窗补丁</h3>
+      <pre>increase window illuminated coverage to 92–97%, keep per-floor variation ≤ ±8%, 
+ensure smooth horizontal continuity, no dead dark patches.</pre>
+      <h3>倒影补丁</h3>
+      <pre>force puddle reflection to abstract smear and misaligned chromatic streaks; 
+destroy glyph legibility; reflection energy ≈35%.</pre>
+      <h3>去颗粒补丁</h3>
+      <pre>remove glitter/rainbow particles from glazing; keep physical layered reflections,
+refraction and Fresnel; do not alter other content.</pre>
+    </section>
+
+    <section>
+      <p class="small">注：模板中的英文短语经实践验证更稳定；若平台更偏好中文，可按原义替换。</p>
+    </section>
+
+  </div>
+</body>
+</html>
